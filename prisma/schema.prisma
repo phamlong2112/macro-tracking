@@ -1,0 +1,127 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Topic {
+  id        String  @id            // "fx" | "demand" | "rates" | "trade" | "macro" | "hormuz"
+  code      String                  // "A".."F"
+  icon      String                  // emoji
+  name      String
+  sortOrder Int
+  indicators Indicator[]
+  news       NewsItem[]
+  statuses   TopicWeeklyStatus[]
+}
+
+model Indicator {
+  id             String   @id @default(cuid())
+  topicId        String
+  topic          Topic    @relation(fields: [topicId], references: [id])
+  category       String   // "core" | "context"
+  name           String
+  scope          String?
+  unit           String?
+  freq           String   // "Ngày" | "Tuần" | "Tháng" | "Quý" | "Kỳ họp" | "Sự kiện" | "Kỳ 10 ngày"
+  source         String?
+  manualEntry    Boolean  @default(false)
+  pnlChannel     String?
+  thresholdText  String?
+  definition     String?
+  markValue      Float?   // ngưỡng vẽ đường nét đứt trên chart (vd 50 cho PMI)
+  sortOrder      Int      @default(0)
+  observations   Observation[]
+  movers         Mover[]
+}
+
+model Observation {
+  id           String    @id @default(cuid())
+  indicatorId  String
+  indicator    Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  date         DateTime
+  value        Float?
+  displayValue String?   // giá trị đã format, vd "26.268" hoặc "$76,6"
+  signal       String    // "green" | "amber" | "red"
+  note         String?   // diễn giải biến động
+  cmpW         String?   // so sánh tuần
+  cmpM         String?   // so sánh tháng
+  cmpYtd       String?   // so sánh YTD
+  cmpYoy       String?   // so sánh YoY
+
+  @@unique([indicatorId, date])
+  @@index([indicatorId, date])
+}
+
+model WeeklyReport {
+  id            String   @id @default(cuid())
+  weekOf        DateTime
+  publishDate   DateTime
+  horizon       String   @default("")
+  status        String   // "pos" | "cau" | "risk"
+  thesis        String   @default("")
+  topicStatuses TopicWeeklyStatus[]
+  movers        Mover[]
+  scenarios     Scenario[]
+  calendar      CalendarItem[]
+  news          NewsItem[]
+}
+
+model TopicWeeklyStatus {
+  id             String       @id @default(cuid())
+  weeklyReportId String
+  weeklyReport   WeeklyReport @relation(fields: [weeklyReportId], references: [id], onDelete: Cascade)
+  topicId        String
+  topic          Topic        @relation(fields: [topicId], references: [id])
+  status         String       // "pos" | "cau" | "risk"
+  trend          String       // "up" | "down" | "flat"
+  driverNote     String?
+
+  @@unique([weeklyReportId, topicId])
+}
+
+model Mover {
+  id             String       @id @default(cuid())
+  weeklyReportId String
+  weeklyReport   WeeklyReport @relation(fields: [weeklyReportId], references: [id], onDelete: Cascade)
+  indicatorId    String?
+  indicator      Indicator?   @relation(fields: [indicatorId], references: [id])
+  name           String
+  note           String
+  val            String
+  dir            String       // "up" | "down"
+}
+
+model Scenario {
+  id             String       @id @default(cuid())
+  weeklyReportId String
+  weeklyReport   WeeklyReport @relation(fields: [weeklyReportId], references: [id], onDelete: Cascade)
+  icon           String
+  name           String
+  level          String       // "monitor" | "caution" | "trigger"
+  note           String
+}
+
+model CalendarItem {
+  id             String       @id @default(cuid())
+  weeklyReportId String
+  weeklyReport   WeeklyReport @relation(fields: [weeklyReportId], references: [id], onDelete: Cascade)
+  date           String
+  event          String
+  highPriority   Boolean      @default(false)
+}
+
+model NewsItem {
+  id             String       @id @default(cuid())
+  weeklyReportId String
+  weeklyReport   WeeklyReport @relation(fields: [weeklyReportId], references: [id], onDelete: Cascade)
+  topicId        String
+  topic          Topic        @relation(fields: [topicId], references: [id])
+  tone           String       // "pos" | "neg" | "neu"
+  text           String
+}

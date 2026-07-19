@@ -1,0 +1,24 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Scrollbar styles */
+.horizontal-scroll::-webkit-scrollbar { height: 8px; }
+.horizontal-scroll::-webkit-scrollbar-track { background: #030d24; }
+.horizontal-scroll::-webkit-scrollbar-thumb { background: #304778; border-radius: 4px; }
+.horizontal-scroll::-webkit-scrollbar-thumb:hover { background: #5f74a9; }
+
+/* Indicator row hover */
+.indicator-row { transition: all 0.2s ease-in-out; border-bottom: 1px solid #232d45; }
+.indicator-row:hover { background-color: rgba(175,198,255,0.05); cursor: pointer; border-radius: 0.25rem; }
+.indicator-row:last-child { border-bottom: none; }
+
+/* Status dots */
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.dot-green { background-color: #22c55e; box-shadow: 0 0 4px #22c55e; }
+.dot-red { background-color: #f04b4b; box-shadow: 0 0 4px #f04b4b; }
+.dot-amber { background-color: #f0a824; box-shadow: 0 0 4px #f0a824; }
+
+/* Row hover for screen3 */
+.row-hover:hover { background-color: rgba(175, 198, 255, 0.05); }

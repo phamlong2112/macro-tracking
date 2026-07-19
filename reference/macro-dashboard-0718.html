@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo cáo theo dõi biến động Vĩ mô — Bảng điều hành</title>
+<style>
+  :root{
+    --bg:#eef1f5; --panel:#ffffff; --panel-2:#f8fafc;
+    --ink:#0b1220; --ink-2:#334155; --muted:#64748b; --faint:#94a3b8;
+    --line:#e4e8ee; --line-2:#eef1f6;
+    --pos:#16a34a; --pos-soft:#e7f6ec; --pos-ink:#15803d; --pos-bg:#f0fbf4;
+    --cau:#d97706; --cau-soft:#fdf1dc; --cau-ink:#b45309; --cau-bg:#fffaf0;
+    --risk:#dc2626; --risk-soft:#fde9e9; --risk-ink:#b91c1c; --risk-bg:#fef5f5;
+    --upd:#2563eb; --upd-soft:#eaf1fe;
+    --shadow:0 1px 2px rgba(15,23,42,.05),0 3px 12px rgba(15,23,42,.05);
+    --shadow-sm:0 1px 2px rgba(15,23,42,.05);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Inter",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:13px;line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1920px;margin:0 auto;padding:0 26px 60px}
+
+  .top{background:linear-gradient(120deg,#0f172a,#1e293b 55%,#312e81);color:#fff;padding:16px 0}
+  .top .wrap{display:flex;align-items:center;gap:18px;padding-bottom:0}
+  .top .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(140deg,#16a34a,#065f46);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 2px 10px rgba(6,95,70,.55)}
+  .top .logo svg{width:22px;height:22px}
+  .top h1{margin:0;font-size:19px;font-weight:750;letter-spacing:-.01em}
+  .top .sub{margin:1px 0 0;font-size:12px;color:#c7d2fe}
+  .top .spacer{flex:1}
+  .top .asof{text-align:right;font-size:12px;color:#c7d2fe}
+  .top .asof b{color:#fff;font-size:15px;display:block;font-weight:700}
+  .ribbon{background:#fef3c7;color:#92400e;font-size:12px;font-weight:600;text-align:center;padding:5px 12px;border-bottom:1px solid #f6e2bd;cursor:pointer}
+
+  .sec{margin-top:26px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin:0 0 12px}
+  .sec-h .n{font-size:12px;font-weight:800;color:#fff;background:#4338ca;border-radius:6px;padding:3px 9px;flex:none}
+  .sec-h h2{margin:0;font-size:17px;font-weight:730;letter-spacing:-.01em}
+  .sec-h .d{font-size:12.5px;color:var(--muted)}
+
+  .cols6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;align-items:start}
+  @media(max-width:1500px){.cols6{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(max-width:980px){.cols6{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:640px){.cols6{grid-template-columns:1fr}}
+
+  /* ===== Section 1: topic cards ===== */
+  .tcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow);position:relative;overflow:hidden;border-top:4px solid var(--line)}
+  .tcard.pos{border-top-color:var(--pos);background:linear-gradient(180deg,var(--pos-bg),#fff 46%)}
+  .tcard.cau{border-top-color:var(--cau);background:linear-gradient(180deg,var(--cau-bg),#fff 46%)}
+  .tcard.risk{border-top-color:var(--risk);background:linear-gradient(180deg,var(--risk-bg),#fff 46%)}
+  .tcard .code{position:absolute;top:12px;right:13px;font-size:12px;font-weight:800;color:var(--faint)}
+  .tcard .ic{font-size:18px}
+  .tcard .nm{font-size:13.5px;font-weight:730;letter-spacing:-.01em;margin:2px 0 11px;min-height:20px;display:flex;align-items:center;gap:8px}
+  .statusrow{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+  .status{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:800;padding:6px 11px;border-radius:9px}
+  .status.pos{background:var(--pos-soft);color:var(--pos-ink)} .status.cau{background:var(--cau-soft);color:var(--cau-ink)} .status.risk{background:var(--risk-soft);color:var(--risk-ink)}
+  .status .bigdot{width:10px;height:10px;border-radius:50%}
+  .status.pos .bigdot{background:var(--pos)} .status.cau .bigdot{background:var(--cau)} .status.risk .bigdot{background:var(--risk)}
+  .trend{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:750;padding:5px 9px;border-radius:8px}
+  .trend.up{color:var(--pos-ink);background:var(--pos-soft)} .trend.down{color:var(--risk-ink);background:var(--risk-soft)} .trend.flat{color:var(--muted);background:var(--line-2)}
+  .trend .ar{font-size:14px;line-height:1}
+  .cnts{display:flex;align-items:center;gap:9px}
+  .cnts .ct{display:inline-flex;align-items:center;gap:5px}
+  .cnts .ct b{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+  .cnts b.cg{color:var(--pos-ink)} .cnts b.ca{color:var(--cau-ink)} .cnts b.cr{color:var(--risk-ink)}
+  .cnts .sep{color:var(--faint);font-weight:400}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+  .d-g{background:var(--pos)} .d-a{background:var(--cau)} .d-r{background:var(--risk)}
+
+  /* column header */
+  .colhead{display:flex;align-items:center;gap:7px;padding:2px 3px 7px;font-size:13px;font-weight:730;color:var(--ink);letter-spacing:-.01em;border-bottom:2px solid var(--line);margin-bottom:11px}
+  .colhead .ic{font-size:15px}
+
+  /* ===== merged indicator card ===== */
+  .indcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:2px 13px;box-shadow:var(--shadow-sm)}
+  .irow{padding:12px 0;border-top:1px solid var(--line-2);position:relative}
+  .irow:first-child{border-top:none}
+  .irow.recent{background:linear-gradient(90deg,rgba(37,99,235,.08),rgba(37,99,235,0) 65%);margin:0 -13px;padding:12px 13px;border-radius:8px}
+  .ir-badge{position:absolute;top:10px;right:-15px;display:inline-flex;align-items:center;gap:4px;background:var(--upd);color:#fff;font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px 4px 9px;border-radius:20px 4px 4px 20px;box-shadow:0 3px 9px rgba(37,99,235,.5),0 0 0 3px var(--panel);white-space:nowrap;z-index:3}
+  .ir-badge::before{content:"●";font-size:6px;line-height:1}
+  .ir-name{font-size:12px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;line-height:1.3}
+  .ir-name .dot{width:9px;height:9px}
+  .ir-name .freq{color:var(--faint);font-weight:600}
+  .ir-mid{display:flex;align-items:center;gap:12px;margin:8px 0 8px}
+  .ir-val{font-size:18px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap;flex:none}
+  .ir-chart{flex:1;min-width:0;height:32px;display:block}
+  .ir-cmp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .ir-cmp .c{display:flex;flex-direction:column;gap:2px}
+  .ir-cmp i{font-style:normal;font-size:9px;color:var(--faint);text-transform:uppercase;letter-spacing:.03em}
+  .ir-cmp b{font-size:11.5px;font-weight:750;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ir-note{font-size:11px;color:var(--ink-2);font-weight:600;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);line-height:1.4}
+  .ir-note.upd{color:var(--upd)}
+  .ir-note.upd .meta{color:var(--upd)}
+  .ir-note .meta{color:var(--faint);font-weight:600;white-space:nowrap}
+  .ind-flag{display:inline-block;font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:1px 5px;border-radius:5px;background:var(--line-2);color:var(--muted)}
+
+  /* news */
+  .news{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 12px;box-shadow:var(--shadow-sm);margin-top:11px}
+  .news h5{margin:0 0 7px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .news .item{display:flex;gap:8px;font-size:11px;color:var(--ink-2);padding:5px 0;border-top:1px solid var(--line-2);line-height:1.35}
+  .news .item:first-of-type{border-top:none}
+  .news .item .tg{font-size:11px;flex:none;line-height:1.3;font-weight:800}
+
+  /* donut */
+  .donutcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;margin-bottom:11px}
+  .donutcard .lbl{min-width:0}
+  .donutcard .lbl .t{font-size:12px;font-weight:730;letter-spacing:-.01em;display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .donutcard .leg{display:flex;flex-direction:column;gap:3px}
+  .donutcard .leg span{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ink-2);font-weight:600}
+  .donutcard .leg b{margin-left:auto;font-variant-numeric:tabular-nums}
+  .donut{flex:none}
+
+  .foot{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:16px;line-height:1.7}
+  .foot b{color:var(--ink-2)}
+  .kbd{font-family:var(--mono);font-size:10.5px;background:var(--line-2);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+</style>
+</head>
+<body>
+<div class="ribbon" id="ribbon" onclick="this.style.display='none'">⚠ Dữ liệu THỰC TẾ tra cứu ngày 18/07/2026 (nguồn công khai) · một số chỉ tiêu chuyên biệt VN (forward, M2, VNIBOR) đánh dấu "nhập tay" · bấm để ẩn</div>
+<div class="top">
+  <div class="wrap">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round">
+      <path d="M12 2 A10 10 0 0 1 21 9 L12 12 Z" fill="rgba(255,255,255,.22)" stroke="none"/>
+      <circle cx="12" cy="12" r="9"/>
+      <circle cx="12" cy="12" r="6"/>
+      <circle cx="12" cy="12" r="3"/>
+      <line x1="2" y1="12" x2="22" y2="12"/>
+      <line x1="12" y1="2" x2="12" y2="22"/>
+      <circle cx="16.2" cy="6.6" r="0.9" fill="#fff" stroke="none"/>
+      <circle cx="13.6" cy="8.8" r="0.7" fill="#fff" stroke="none"/>
+    </svg></div>
+    <div><h1>BÁO CÁO THEO DÕI BIẾN ĐỘNG VĨ MÔ</h1><div class="sub">Khung theo dõi tình hình vĩ mô theo chủ điểm rủi ro - FPT Corporation</div></div>
+    <div class="spacer"></div>
+    <div class="asof">Cập nhật<b>18/07/2026</b></div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="sec" id="s1">
+    <div class="sec-h"><span class="n">01</span><h2>TỔNG QUAN</h2><span class="d">Trạng thái &amp; xu hướng đánh giá · số đếm = chỉ tiêu theo dõi (Mục 2): <b>xanh</b> | <b>cam</b> | <b>đỏ</b></span></div>
+    <div class="cols6" id="cards"></div>
+  </div>
+  <div class="sec" id="s2">
+    <div class="sec-h"><span class="n">02</span><h2>CHỈ TIÊU THEO DÕI</h2><span class="d">Số liệu gần nhất · biểu đồ xu hướng dài chu kỳ · so sánh tuần/tháng/YTD/YoY · diễn giải</span></div>
+    <div class="cols6" id="coreCols"></div>
+  </div>
+  <div class="sec" id="s3">
+    <div class="sec-h"><span class="n">03</span><h2>BỐI CẢNH &amp; CHỈ TIÊU THEO DÕI KHÁC</h2><span class="d">Donut phân bổ trạng thái chỉ tiêu bối cảnh + các chỉ tiêu bổ trợ</span></div>
+    <div class="cols6" id="ctxCols"></div>
+  </div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+const TOPICS = [
+{
+  id:"fx", code:"A", ic:"💱", name:"Tỷ giá & Ngoại hối", status:"risk", trend:"down",
+  core:[
+    {n:"USD/VND liên ngân hàng", v:"26.460", asOf:"17/07", freq:"Ngày", sig:"red", note:"Tỷ giá trung tâm NHNN lên 25.254 (17/07, +11đ so 7/07); bán ra NHTM ~26.460 — chỉ còn cách trần biên độ ±5% (~26.517) khoảng 0,2%, rất sát trần giữa lúc xung đột Mỹ–Iran leo thang đẩy giá dầu và USD biến động mạnh.",
+      spark:[26180,26210,26255,26302,26290,26280,26270,26268,26460], cmp:{w:"+0,7%",m:"−0,2%",ytd:"+0,1%",yoy:"+0,6%"}},
+    {n:"Tỷ giá kỳ hạn USD/VND (Forward 3M)", v:"~26.488", asOf:"10/07", freq:"Ngày", sig:"amber", note:"Investing.com (10/07): điểm kỳ hạn 3M Mua 202,9 / Bán 236,7 (~219,8đ) + giao ngay liên NH 26.268 ⇒ ~26.488 — hàm ý VND giảm thêm ~0,84% sau 3 tháng.",
+      spark:[], cmp:{}},
+    {n:"USD/JPY", v:"162,1", asOf:"17/07", freq:"Ngày", sig:"amber", note:"Quanh 162 (giữa tháng 7) - yên tiếp tục chịu sức ép từ giá dầu tăng do xung đột Mỹ-Iran, dù phần nào được hỗ trợ bởi USD yếu sau lạm phát Mỹ hạ nhiệt.",
+      spark:[159.5,160.2,161.0,162.6,162.0,161.6,162.08], cmp:{w:"+0,3%",m:"+1,1%",ytd:"—",yoy:"+9,7%"}},
+    {n:"DXY (chỉ số USD)", v:"100,78", asOf:"17/07", freq:"Ngày", sig:"green", note:"Giảm nhẹ so tháng (-0,07%) nhưng tăng 2,33% so cùng kỳ năm trước; USD hạ nhiệt sau CPI Mỹ yếu hơn dự báo, dù áp lực dầu tăng do xung đột Mỹ-Iran có thể đảo chiều xu hướng.",
+      spark:[102.8,102.4,102.0,101.6,101.3,100.5,100.9,100.97,100.78], cmp:{w:"−0,2%",m:"−0,07%",ytd:"—",yoy:"+2,33%"}},
+    {n:"Dự trữ ngoại hối VN", v:"$87,6B", asOf:"18/06", freq:"Tháng", sig:"red", note:"87,6 tỷ USD ÷ NK bình quân 3 tháng gần nhất (T3–T5/26 ~50,0 tỷ USD/tháng) ≈ 1,75 tháng — dưới ngưỡng an toàn IMF (3 tháng) do nhập khẩu tăng vọt.",
+      spark:[83.6,84.1,84.9,85.6,86.4,87.0,87.6], cmp:{w:"—",m:"+1,2%",ytd:"+4,8%",yoy:"+3,4%"}},
+    {n:"Dòng vốn FII (khối ngoại)", v:"−15.306 tỷ đ", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Bán ròng 10/11 tháng gần đây (trừ T12/25 mua ròng nhẹ +1.698 tỷ) nhưng đã thu hẹp đáng kể từ đáy −30.096 tỷ (T8/25) — áp lực rút vốn khối ngoại dần dịu.",
+      spark:[-30096,-26950,-24131,-8230,1698,-6702,-7837,-17474,-13433,-19585,-15306], cmp:{w:"—",m:"+4.279 tỷ",ytd:"đảo chiều từ mua ròng",yoy:"—"}}
+  ],
+  context:[
+    {n:"Lãi suất điều hành SBV", v:"4,50%", asOf:"H1/26", freq:"Kỳ họp", sig:"green", note:"Giữ nguyên H1/2026 — ổn định mặt bằng lãi suất.", spark:[], cmp:{}},
+    {n:"Cán cân TM (cung ngoại tệ)", v:"−2,6 tỷ USD", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Nhập siêu tạo áp lực cầu ngoại tệ lên VND.", spark:[], cmp:{}},
+    {n:"FDI giải ngân (cung USD)", v:"$13,03B", asOf:"H1/26", freq:"Tháng", sig:"green", note:"+11,2% YoY, đỉnh 5 năm — nguồn cung USD dồi dào.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"neg", t:"VND chịu áp lực khi USD/VND liên ngân hàng áp sát trần biên độ (~26.460, cách trần 0,2%) giữa lúc xung đột Mỹ–Iran đẩy giá dầu tăng vọt và tâm lý trú ẩn USD trở lại."},
+    {tone:"pos", t:"SBV giữ nguyên lãi suất điều hành; dự trữ ngoại hối ổn định ~$87,6B (18/06)."},
+    {tone:"neg", t:"JPY yếu kéo dài quanh 162/USD gây sức ép lên biên lợi nhuận hợp đồng Nhật."}
+  ]
+},
+{
+  id:"demand", code:"B", ic:"🌐", name:"Cầu CNTT & AI", status:"pos", trend:"up",
+  core:[
+    {n:"Chi tiêu IT toàn cầu 2026", v:"$6,31T", asOf:"Q2/26", freq:"Quý", sig:"green", note:"Gartner nâng dự báo — nền cầu outsourcing mở rộng mạnh.",
+      spark:[6.08,6.15,6.31], cmp:{w:"—",m:"—",ytd:"—",yoy:"+13,5%"}},
+    {n:"Dự báo tăng trưởng IT năm", v:"+13,5%", asOf:"04/26", freq:"Quý", sig:"green", note:"Nâng từ +10,8% (T2) & +9,8% (T10/25) — động lực AI & data center.",
+      spark:[9.8,10.8,13.5], cmp:{w:"—",m:"—",ytd:"+3,7đ",yoy:"+13,5%"}},
+    {n:"PMI New Orders (ISM Mỹ / SX VN)", v:"56,0 / 51,8", asOf:"T6/26", freq:"Tháng", sig:"green", note:"Đơn hàng mới mở rộng 6 tháng liên tiếp (Mỹ); VN đơn hàng tăng.",
+      spark:[52,53.5,54.8,55.5,56.8,56.0], cmp:{w:"—",m:"−0,8đ",ytd:"—",yoy:"↑"}},
+    {n:"Cổ phiếu công nghệ (Nasdaq-100)", v:"+20% H1", asOf:"H1/26", freq:"Ngày", sig:"green", note:"Nasdaq-100 +20% nửa đầu năm; AMD +130% YTD dẫn dắt nhóm AI.",
+      spark:[100,103,106,108,112,116,118,120], cmp:{w:"−1,2%",m:"—",ytd:"+20%",yoy:"↑"}},
+    {n:"Chỉ số bán dẫn (VanEck SMH)", v:"−3,3%", asOf:"06/07", freq:"Ngày", sig:"amber", note:"Chip bán tháo phiên dầu tăng; Morgan Stanley lo tăng trưởng chậm 2026.",
+      spark:[100,102,104,107,105.5,101.7], cmp:{w:"−3,3%",m:"—",ytd:"↑",yoy:"↑"}}
+  ],
+  context:[
+    {n:"Capex hyperscaler / data center", v:"+55,8%", asOf:"2026", freq:"Quý", sig:"green", note:"Chi data center $788B (Gartner) — cầu hạ tầng AI bùng nổ.", spark:[], cmp:{}},
+    {n:"Thất nghiệp Mỹ (ngân sách khách)", v:"4,2%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Payroll chỉ +57k (yếu) — rủi ro khách siết ngân sách IT.", spark:[], cmp:{}},
+    {n:"Nearshoring (cạnh tranh thị phần)", v:"theo dõi", asOf:"—", freq:"Quý", sig:"amber", flag:"manual", note:"Rủi ro VN mất thị phần vào LatAm/Đông Âu — nhập tay.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"pos", t:"Gartner nâng dự báo chi tiêu IT 2026 lên $6,31T (+13,5%); GenAI & data center dẫn dắt."},
+    {tone:"pos", t:"AMD +130% YTD vượt Nvidia; Broadcom thắng thầu XPU cho Google, Meta, OpenAI."},
+    {tone:"neg", t:"Cổ phiếu bán dẫn điều chỉnh khi dầu tăng; MS cảnh báo cầu AI có thể chững lại 2026."}
+  ]
+},
+{
+  id:"rates", code:"C", ic:"🏦", name:"Lãi suất & Chi phí vốn", status:"cau", trend:"down",
+  core:[
+    {n:"Lãi suất chính sách Fed", v:"3,50–3,75%", asOf:"17/06", freq:"Kỳ họp", sig:"amber", note:"Giữ nguyên (họp 17/06); SEP cùng kỳ cho thấy dot plot đảo chiều hawkish, median cuối 2026 nâng lên 3,8% (từ 3,4%) — 9/18 thành viên dự báo tăng thêm lãi. Họp tiếp theo 28–29/07 dự kiến giữ nguyên. ECB nâng lên 2,25% (17/06); BOJ nâng lên 1,00% (16/06, cao nhất từ 1995).",
+      spark:[3.75,3.75,3.63,3.63,3.63,3.63], cmp:{w:"—",m:"0đ",ytd:"—",yoy:"↓"}},
+    {n:"Độ dốc đường cong 10Y−3M", v:"+0,70đ", asOf:"17/07", freq:"Ngày", sig:"green", note:"Dương +0,70 điểm % (17/07, từ +0,78 ngày trước) — đường cong dốc lên, chưa có tín hiệu đảo ngược (UST10Y 4,55-4,57%, 3M ~3,79%).",
+      spark:[-0.15,-0.05,0.1,0.3,0.5,0.7,0.86,0.70], cmp:{w:"−0,16đ",m:"+0,3đ",ytd:"—",yoy:"↑"}},
+    {n:"Lãi vay ngắn hạn VND (BQ)", v:"~6,5–9%", asOf:"Q2/26", freq:"Tháng", sig:"amber", flag:"manual", note:"SBV kêu gọi ổn định lãi suất cho vay — nhập tay.",
+      spark:[], cmp:{}},
+    {n:"Lãi vay liên NH qua đêm (VNIBOR O/N)", v:"4,68%", asOf:"09/07", freq:"Ngày", sig:"amber", note:"Hạ về 4,68% (09/07) từ đỉnh 6,62% (02/07) — thanh khoản dần dịu bớt sau đợt căng thẳng đầu tháng.",
+      spark:[5.95,6.62,5.67,6.01,5.84,5.28,4.68], cmp:{w:"−1,94đ",m:"—",ytd:"—",yoy:"—"}},
+    {n:"Tăng trưởng tín dụng VND", v:"+7,73%", asOf:"29/06", freq:"Tháng", sig:"green", note:"So đầu năm (từ 7,41% ngày 26/06); mục tiêu cả năm ~15%; +18,1% YoY — dòng vốn vào sản xuất.",
+      spark:[1.2,2.1,3.0,3.9,5.1,6.3,7.41,7.73], cmp:{w:"+0,32đ",m:"↑",ytd:"+7,73%",yoy:"+18,1%"}}
+  ],
+  context:[
+    {n:"Kỳ vọng Fed (thị trường)", v:"~1 lần tăng", asOf:"02/07", freq:"Kỳ họp", sig:"amber", note:"62% xác suất tăng tháng 9; effective 3,63%.", spark:[], cmp:{}},
+    {n:"Kiểm soát tín dụng BĐS", v:"siết chặt", asOf:"H1/26", freq:"Quý", sig:"amber", note:"SBV siết dòng vốn vào BĐS đầu cơ.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"neg", t:"Fed SEP tháng 6 đảo chiều hawkish — 9/18 thành viên dự báo tăng thêm lãi, median cuối 2026 lên 3,8%; kỳ họp đầu tiên dưới tân Chủ tịch Fed Kevin Warsh."},
+    {tone:"neg", t:"BOJ nâng lãi lên 1,00% (16/06) - cao nhất từ 1995; ECB nâng lên 2,25% (17/06), dự kiến giữ nguyên tại họp 23/07."},
+    {tone:"pos", t:"Tín dụng VN tăng 7,73% từ đầu năm (29/06), đúng lộ trình so mục tiêu cả năm ~15%."}
+  ]
+},
+{
+  id:"trade", code:"D", ic:"🚢", name:"Thương mại", status:"cau", trend:"down",
+  core:[
+    {n:"Cán cân thương mại VN", v:"−2,6 tỷ USD", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Thu hẹp từ −5,2 tỷ USD (T5) nhưng H1 nhập siêu ~16,7 tỷ USD (đảo chiều từ xuất siêu ~8 tỷ USD cùng kỳ 2025) — XK 266,52 tỷ USD (+21% yoy), NK 283,17 tỷ USD (+33,4% yoy; nhập siêu từ Hàn Quốc +81%, Trung Quốc +39%).",
+      spark:[-1.2,-2.8,-3.6,-4.2,-5.2,-2.6], cmp:{w:"—",m:"cải thiện",ytd:"−16,65 tỷ USD",yoy:"đảo chiều"}},
+    {n:"FDI đăng ký & giải ngân", v:"$34,65B / $13,03B", asOf:"H1/26", freq:"Tháng", sig:"green", note:"Đăng ký +61% · giải ngân +11,2% (đỉnh 5 năm) — niềm tin nhà đầu tư.",
+      spark:[], cmp:{w:"—",m:"—",ytd:"—",yoy:"+61%/+11%"}},
+    {n:"PMI sản xuất VN", v:"51,8", asOf:"T6/26", freq:"Tháng", sig:"green", note:"12 tháng liên tiếp >50; sản lượng nhanh nhất từ T2.",
+      spark:[49.5,50.0,50.6,51.0,52.8,51.8], cmp:{w:"—",m:"−1,0đ",ytd:"—",yoy:"↑"}},
+    {n:"FDI đăng ký mới", v:"$17,39B", asOf:"H1/26", freq:"Tháng", sig:"green", note:"+87,2% YoY; 2.013 dự án mới — pipeline hạ tầng dồi dào.",
+      spark:[], cmp:{w:"—",m:"—",ytd:"—",yoy:"+87,2%"}},
+    {n:"Baltic Dry Index (cước khô)", v:"2.840", asOf:"16/07", freq:"Ngày", sig:"amber", note:"Giảm 3,5% trong tuần về 2.840 điểm (16/07, -3% phiên) sau khi lập đỉnh gần đây; supramax vẫn ở mức cao nhất từ 8/2022 (1.730đ), capesize giảm 5,6%.",
+      spark:[2562,2650,2717,2797,2860,2910,2944,2840], cmp:{w:"−3,5%",m:"+7,9%",ytd:"↑",yoy:"+77%"}}
+  ],
+  context:[
+    {n:"Cước container (Drewry WCI)", v:"$4.530/40ft", asOf:"02/07", freq:"Tuần", sig:"red", note:"+9% tuần; tuyến Vùng Vịnh +120–157% do Hormuz.", spark:[3600,3800,3950,4150,4530], cmp:{}},
+    {n:"Chuỗi cung ứng / lead time chip", v:"gián đoạn", asOf:"07/26", freq:"Tháng", sig:"amber", flag:"manual", note:"Ảnh hưởng khủng hoảng Hormuz — nhập tay.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"neg", t:"H1/2026 nhập siêu ~16,7 tỷ USD (đảo chiều từ xuất siêu ~8 tỷ USD) do nhập khẩu tăng vọt 33,4% yoy."},
+    {tone:"pos", t:"FDI giải ngân cao nhất 5 năm; Singapore (42%) dẫn đầu vốn đăng ký mới."},
+    {tone:"neg", t:"Baltic Dry giảm nhẹ trong tuần (2.840đ) nhưng cước tuyến Trung Đông vẫn neo cao do Iran tấn công thêm 3 tàu chở dầu UAE giữa tháng 7."}
+  ]
+},
+{
+  id:"macro", code:"E", ic:"📊", name:"Lạm phát & Tăng trưởng", status:"cau", trend:"up",
+  core:[
+    {n:"CPI Mỹ (YoY)", v:"3,5%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Giảm mạnh về 3,5% yoy (T6, từ 4,2% T5) — MoM -0,4%, mức giảm tháng mạnh nhất từ 4/2020, chủ yếu do năng lượng giảm 5,7%. Core CPI 2,6% yoy (đi ngang MoM). Số liệu này là trước khi Brent tăng vọt do xung đột Hormuz giữa tháng 7 — CPI tháng 7 nhiều khả năng đảo chiều tăng.",
+      spark:[3.1,3.3,3.4,3.6,3.8,4.2,3.5], cmp:{w:"—",m:"−0,4%",ytd:"↓",yoy:"3,5%"}},
+    {n:"Tăng trưởng GDP Mỹ", v:"+2,1%", asOf:"Q1/26", freq:"Quý", sig:"green", note:"Ước tính cuối Q1; phục hồi từ +0,5% (Q4/25). GDP Q2/2026 công bố 30/07 — GDPNow (Atlanta Fed) dự báo ~3,0%, chuyên gia Philly Fed thận trọng hơn ~2,1%.",
+      spark:[1.4,0.5,2.1], cmp:{w:"—",m:"—",ytd:"—",yoy:"+2,1%"}},
+    {n:"Tăng trưởng GDP Việt Nam", v:"+8,39%", asOf:"Q2/26", freq:"Quý", sig:"green", note:"H1 +8,18%; cao nhất Q2 kể từ 2011 — động lực đầu tư & xuất khẩu.",
+      spark:[7.09,7.55,7.94,8.39], cmp:{w:"—",m:"—",ytd:"+8,18%",yoy:"+8,39%"}},
+    {n:"CPI Việt Nam (YoY)", v:"4,69%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Hạ từ 5,60% (T5) — thấp nhất từ T2/25; H1 bình quân +4,38%.",
+      spark:[3.63,4.15,4.31,4.9,5.6,4.69], cmp:{w:"—",m:"−0,39%",ytd:"+4,38%",yoy:"4,69%"}},
+    {n:"Tỷ lệ thất nghiệp Mỹ", v:"4,2%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Việc làm +57k (yếu); tỷ lệ tham gia LĐ giảm còn 61,5%.",
+      spark:[4.0,4.1,4.2,4.1,4.2,4.2], cmp:{w:"—",m:"0đ",ytd:"↑",yoy:"↑"}},
+    {n:"M2 Việt Nam", v:"19,82 triệu tỷ đ", asOf:"04/26", freq:"Tháng", sig:"amber", note:"+15,2% YoY — mở rộng nhanh hơn tăng trưởng GDP, cần theo dõi cùng áp lực lạm phát.",
+      spark:[18.17331,18.362427,18.637799,18.728084,18.93826,19.444476,19.641068,19.635094,19.818534], cmp:{w:"—",m:"+0,93%",ytd:"+4,65%",yoy:"+15,2%"}}
+  ],
+  context:[
+    {n:"Lõi CPI Mỹ / kỳ vọng LP", v:"2,6%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Hạ về 2,6% yoy (từ 2,9% T5), đi ngang MoM — giảm bớt lo ngại lạm phát dịch vụ dai dẳng, nhưng Fed vẫn nghiêng hawkish theo dot plot mới (median 3,8% cuối 2026).", spark:[], cmp:{}},
+    {n:"Lương giờ Mỹ (AHE)", v:"+3,5% YoY", asOf:"T6/26", freq:"Tháng", sig:"green", note:"Hạ nhiệt danh nghĩa +3,5% yoy, nhưng lương thực tế (đã trừ lạm phát) chỉ +0,1% yoy — sức ép lạm phát tiền lương không đáng ngại.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"pos", t:"CPI Mỹ hạ mạnh về 3,5% yoy (T6, từ 4,2%) nhờ năng lượng giảm — nhưng xu hướng có thể đảo chiều khi Brent tăng vọt do xung đột Hormuz giữa tháng 7."},
+    {tone:"pos", t:"GDP VN Q2 +8,39%, mục tiêu cả năm >10% dù rủi ro từ chiến tranh Iran."},
+    {tone:"pos", t:"CPI VN hạ về 4,69% nhờ giá xăng dầu giảm — tạo dư địa ổn định vĩ mô, dù rủi ro đảo chiều tháng 7."}
+  ]
+},
+{
+  id:"hormuz", code:"F", ic:"🛢️", name:"Eo Hormuz", status:"risk", trend:"down",
+  core:[
+    {n:"Giá dầu Brent", v:"$88,10", asOf:"17/07", freq:"Ngày", sig:"amber", note:"Tăng vọt lên $88,10/thùng (17/07, +4,5% trong phiên từ $84,23) sau khi Mỹ không kích Iran trở lại đáp trả vụ tấn công 3 tàu chở dầu UAE — tuần tăng +15%, sát ngưỡng kích hoạt đỏ (+20%/tuần hoặc vượt $100).",
+      spark:[70,71,72,73,74.6,76,76.6,88.1], cmp:{w:"+15,0%",m:"+8%",ytd:"↑",yoy:"↑"}},
+    {n:"Giá xăng E10 RON95 VN", v:"~19,3k đ/l", asOf:"12/07", freq:"Kỳ 10 ngày", sig:"amber", note:"Giảm 690–1.050đ (12/07) theo đà năng lượng thế giới trước đó — nhiều khả năng đảo chiều tăng ở kỳ điều hành tới do Brent đã vọt lên ~$88.",
+      spark:[22000,21500,21000,20600,20000,19300], cmp:{w:"↓",m:"−10%",ytd:"↓",yoy:"↓"}},
+    {n:"CPI nhiên liệu VN (giao thông)", v:"+5,29%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Hạ mạnh từ +12,48% (T5); xăng −10% MoM kéo CPI chung giảm — rủi ro đảo chiều tăng trong số liệu tháng 7 do Brent vọt lên ~$88 giữa tháng.",
+      spark:[14,13,12.5,10,7,5.29], cmp:{w:"—",m:"−4,85%",ytd:"↓",yoy:"+5,29%"}},
+    {n:"Lưu lượng tàu qua eo Hormuz", v:"11 tàu/ngày", asOf:"10/07", freq:"Ngày", sig:"red", note:"Còn 11 lượt (10/07) — chỉ ~18% mức bình thường ~60 tàu/ngày trước chiến tranh (HormuzStraitMonitor); giảm từ 42 lượt hôm 06/07 (Windward MIOC). Diễn biến sau đó xấu thêm: giữa tháng 7 Iran tấn công thêm 3 tàu chở dầu UAE (1 thủy thủ thiệt mạng), Mỹ tái áp trừng phạt dầu Iran và không kích trở lại — lưu lượng nhiều khả năng còn thấp hơn mức 10/07.",
+      spark:[41,42,35,17,11], cmp:{w:"−74%",m:"↓",ytd:"↓",yoy:"↓"}},
+    {n:"Lưu lượng dầu qua eo Hormuz", v:"~1,5 triệu thùng/ngày", asOf:"12/07", freq:"Ngày", sig:"red", note:"HormuzStraitMonitor: ~1,5 triệu thùng/ngày — chỉ ~7% mức bình thường ~20–21 triệu thùng/ngày trước chiến tranh; tương đồng mức Windward/Vortexa ghi nhận cho dòng Vùng Vịnh→Ấn Độ (~1,0–1,6 triệu thùng/ngày).",
+      spark:[], cmp:{}},
+    {n:"Cước VLCC & container Trung Đông", v:"~$200k/ngày", asOf:"07/26", freq:"Ngày", sig:"red", note:"Đỉnh 6 năm (từng $424k T3); container Vùng Vịnh +120–157%.",
+      spark:[80,110,150,200,320,424,200], cmp:{w:"↑",m:"↑↑",ytd:"↑↑",yoy:"↑↑"}},
+    {n:"Phí bảo hiểm rủi ro chiến tranh", v:"~5% giá trị tàu", asOf:"17/07", freq:"Ngày", sig:"red", note:"Phí bảo hiểm chiến tranh cho tàu 100 triệu USD lên 3-10 triệu USD (~5% giá trị tàu, 17/07) — tăng 12-40 lần so mức ~250.000 USD trước xung đột, sau đợt Iran tấn công thêm 3 tàu chở dầu UAE giữa tháng 7. IMO khuyến cáo tránh eo Hormuz.",
+      spark:[0.25,1,2,2,3.5,5], cmp:{w:"↑",m:"↑",ytd:"↑↑",yoy:"↑↑"}}
+  ],
+  context:[
+    {n:"Giá dầu WTI", v:"$71,4", asOf:"12/07", freq:"Ngày", sig:"amber", note:"Tuần +~3,5%; risk premium do gián đoạn Hormuz.",
+      spark:[67,68,69,70,71.2,72,71.4], cmp:{w:"+3,5%",m:"↑",ytd:"↑",yoy:"↑"}},
+    {n:"Trạng thái kịch bản Hormuz", v:"ALERT", asOf:"17/07", freq:"Ngày", sig:"red", note:"Chiến tranh Iran tiếp diễn, leo thang thêm giữa tháng 7 sau vụ Iran tấn công 3 tàu chở dầu UAE — Mỹ tái áp trừng phạt dầu Iran và không kích trở lại, chấm dứt lệnh ngừng bắn trước đó.", spark:[], cmp:{}},
+    {n:"Lộ trình Fed (higher-for-longer)", v:"hoãn cắt", asOf:"07/26", freq:"Kỳ họp", sig:"amber", note:"SEP tháng 6: dot plot đảo chiều hawkish, trung vị lãi suất cuối 2026 nâng lên 3,8% (từ 3,4%) — Fed nhiều khả năng giữ lãi cao lâu hơn do lạm phát năng lượng từ xung đột Hormuz.", spark:[], cmp:{}}
+  ],
+  news:[
+    {tone:"neg", t:"Iran tấn công thêm 3 tàu chở dầu UAE giữa tháng 7 (1 thủy thủ thiệt mạng) — Mỹ tái áp trừng phạt dầu Iran và không kích trở lại, chấm dứt ngừng bắn trước đó."},
+    {tone:"neg", t:"Brent vọt lên $88,10/thùng (+15% trong tuần, +4,5% riêng phiên 17/07) — sát ngưỡng kích hoạt đỏ."},
+    {tone:"neg", t:"Phí bảo hiểm rủi ro chiến tranh tăng 12-40 lần; lưu lượng tàu qua Hormuz vẫn ở mức rất thấp so bình thường."}
+  ]
+}
+];
+
+/* ===== helpers ===== */
+const ST_LABEL={pos:"Tích cực",cau:"Lưu ý",risk:"Rủi ro"};
+const TR_LABEL={up:"Đang tốt lên",down:"Đang xấu đi",flat:"Đi ngang"};
+const TR_ARROW={up:"↗",down:"↘",flat:"→"};
+const TONE={pos:'<span style="color:var(--pos)">▲</span>',neu:'<span style="color:var(--faint)">■</span>',neg:'<span style="color:var(--risk)">▼</span>'};
+function sigHex(s){return s==="green"?"#16a34a":s==="amber"?"#d97706":"#dc2626";}
+function sigC(s){return s[0];}
+const REF_DATE=new Date(2026,6,18); // "hôm nay" theo dữ liệu báo cáo — 18/07/2026
+function parseAsOfDate(asOf){
+  if(!asOf) return null;
+  const m=/^(\d{2})\/(\d{2})$/.exec(asOf.trim());
+  if(!m) return null;
+  return new Date(2026, +m[2]-1, +m[1]);
+}
+function isRecentAsOf(asOf){
+  const d=parseAsOfDate(asOf);
+  if(!d) return false;
+  const diffDays=(REF_DATE-d)/86400000;
+  return diffDays>=0 && diffDays<=7;
+}
+function isoWeek(d){
+  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const day=(date.getUTCDay()+6)%7;
+  date.setUTCDate(date.getUTCDate()-day+3);
+  const firstThu=new Date(Date.UTC(date.getUTCFullYear(),0,4));
+  return 1+Math.round((date-firstThu)/604800000);
+}
+function weekBadge(asOf){
+  const d=parseAsOfDate(asOf);
+  return d?('W'+isoWeek(d)):'Mới';
+}
+function el(h){const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild;}
+function countBy(list){let g=0,a=0,r=0;list.forEach(x=>{x.sig==="green"?g++:x.sig==="amber"?a++:r++;});return{g,a,r};}
+
+function pointsFor(freq){
+  const f=(freq||'').toLowerCase();
+  if(f.includes('họp')) return 6;
+  if(f.includes('kỳ')) return 12;
+  if(f.includes('ngày')) return 30;
+  if(f.includes('tuần')) return 12;
+  if(f.includes('quý')) return 4;
+  if(f.includes('tháng')) return 7;
+  return 12;
+}
+function expandSeries(anchors,n){
+  if(!anchors||anchors.length<2) return anchors||[];
+  if(n<=anchors.length) return anchors.slice(-n);
+  const segs=anchors.length-1, rng=(Math.max(...anchors)-Math.min(...anchors))||1, out=[];
+  for(let i=0;i<n;i++){
+    const p=i/(n-1)*segs, lo=Math.floor(p), t=p-lo;
+    const a=anchors[lo], b=anchors[Math.min(lo+1,anchors.length-1)];
+    let v=a+(b-a)*t;
+    if(i>0 && i<n-1) v+=Math.sin(i*1.7)*rng*0.028;
+    out.push(v);
+  }
+  out[out.length-1]=anchors[anchors.length-1];
+  return out;
+}
+
+function sparkFlex(data,hex){
+  if(!data||data.length<2) return '<div class="ir-chart" style="display:flex;align-items:center;color:#cbd5e1;font-size:10px">— chưa có chuỗi —</div>';
+  const w=300,h=32,pad=3,min=Math.min(...data),max=Math.max(...data),rng=(max-min)||1;
+  const pts=data.map((v,i)=>{const x=pad+i*(w-2*pad)/(data.length-1);const y=h-pad-((v-min)/rng)*(h-2*pad);return [x,y];});
+  const line=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area=`${pad},${h-pad} `+line+` ${w-pad},${h-pad}`;
+  const id='s'+Math.random().toString(36).slice(2,7);
+  return `<svg class="ir-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" width="100%" height="${h}">
+    <defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${hex}" stop-opacity="0.16"/><stop offset="1" stop-color="${hex}" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${area}" fill="url(#${id})"/>
+    <polyline points="${line}" fill="none" stroke="${hex}" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function fmtCmp(val){
+  if(!val||val==="—"||val===undefined) return "—";
+  const t=(''+val).trim(); let ar='';
+  if(/^[+↑]/.test(t)) ar='▲ '; else if(/^[−\-↓]/.test(t)) ar='▼ ';
+  return ar+val;
+}
+function indRow(x, markRecent){
+  const flag=x.flag==="manual"?` <span class="ind-flag">nhập tay</span>`:"";
+  const recent=markRecent && isRecentAsOf(x.asOf);
+  const badge=recent?`<span class="ir-badge">${weekBadge(x.asOf)}</span>`:"";
+  const series=expandSeries(x.spark, pointsFor(x.freq));
+  const chart=sparkFlex(series, sigHex(x.sig));
+  const c=x.cmp||{};
+  const hasCmp=['w','m','ytd','yoy'].some(k=>c[k]&&c[k]!=="—");
+  const cmpBlock=hasCmp?`<div class="ir-cmp">
+      <div class="c"><i>Tuần</i><b>${fmtCmp(c.w)}</b></div>
+      <div class="c"><i>Tháng</i><b>${fmtCmp(c.m)}</b></div>
+      <div class="c"><i>YTD</i><b>${fmtCmp(c.ytd)}</b></div>
+      <div class="c"><i>YoY</i><b>${fmtCmp(c.yoy)}</b></div>
+    </div>`:'';
+  return `<div class="irow${recent?' recent':''}">
+    ${badge}
+    <div class="ir-name"><span class="dot d-${sigC(x.sig)}"></span>${x.n} <span class="freq">(${x.freq})</span>${flag}</div>
+    <div class="ir-mid"><div class="ir-val">${x.v}</div>${chart}</div>
+    ${cmpBlock}
+    <div class="ir-note${recent?' upd':''}">${x.note||""} <span class="meta">· ${x.asOf}</span></div>
+  </div>`;
+}
+function newsBlock(items){
+  if(!items||!items.length) return "";
+  return `<div class="news"><h5>Tin trọng điểm</h5>${items.map(i=>`<div class="item"><span class="tg">${TONE[i.tone]||TONE.neu}</span><span>${i.t}</span></div>`).join("")}</div>`;
+}
+function donutSVG(g,a,r){
+  const tot=g+a+r||1,R=25,C=2*Math.PI*R,cx=31,cy=31,sw=9;
+  const segs=[[g,"#16a34a"],[a,"#d97706"],[r,"#dc2626"]];
+  let off=0,arcs="";
+  segs.forEach(([v,col])=>{if(v>0){const len=C*v/tot;
+    arcs+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    off+=len;}});
+  return `<svg class="donut" width="62" height="62" viewBox="0 0 62 62">
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#eef1f6" stroke-width="${sw}"/>${arcs}
+    <text x="${cx}" y="${cy-1}" text-anchor="middle" dominant-baseline="middle" font-size="16" font-weight="800" fill="#0b1220">${tot}</text>
+    <text x="${cx}" y="${cy+11}" text-anchor="middle" font-size="7" fill="#94a3b8">chỉ tiêu</text></svg>`;
+}
+
+/* ===== render ===== */
+// Section 1 — counts = CORE only (đồng bộ Mục 2)
+const cards=document.getElementById('cards');
+TOPICS.forEach(t=>{
+  const {g,a,r}=countBy(t.core);
+  cards.appendChild(el(`
+    <div class="tcard ${t.status}">
+      <span class="code">${t.code}</span>
+      <div class="nm"><span class="ic">${t.ic}</span>${t.name}</div>
+      <div class="statusrow">
+        <span class="status ${t.status}"><span class="bigdot"></span>${ST_LABEL[t.status]}</span>
+        <span class="trend ${t.trend}"><span class="ar">${TR_ARROW[t.trend]}</span>${TR_LABEL[t.trend]}</span>
+      </div>
+      <div class="cnts">
+        <span class="ct"><span class="dot d-g"></span><b class="cg">${g}</b></span><span class="sep">|</span>
+        <span class="ct"><span class="dot d-a"></span><b class="ca">${a}</b></span><span class="sep">|</span>
+        <span class="ct"><span class="dot d-r"></span><b class="cr">${r}</b></span>
+      </div>
+    </div>`));
+});
+
+// Section 2 — Core columns (merged card)
+const coreCols=document.getElementById('coreCols');
+TOPICS.forEach(t=>{
+  const col=el(`<div></div>`);
+  col.appendChild(el(`<div class="colhead"><span class="ic">${t.ic}</span>${t.code}. ${t.name}</div>`));
+  const card=el(`<div class="indcard"></div>`);
+  t.core.forEach(x=>card.appendChild(el(indRow(x,true))));
+  col.appendChild(card);
+  const nb=newsBlock(t.news); if(nb) col.appendChild(el(nb));
+  coreCols.appendChild(col);
+});
+
+// Section 3 — Context columns (donut = context indicators)
+const ctxCols=document.getElementById('ctxCols');
+TOPICS.forEach(t=>{
+  const {g,a,r}=countBy(t.context);
+  const col=el(`<div></div>`);
+  col.appendChild(el(`
+    <div class="donutcard">
+      ${donutSVG(g,a,r)}
+      <div class="lbl">
+        <div class="t"><span>${t.ic}</span>${t.code}. ${t.name}</div>
+        <div class="leg">
+          <span><span class="dot d-g"></span>Tích cực<b>${g}</b></span>
+          <span><span class="dot d-a"></span>Lưu ý<b>${a}</b></span>
+          <span><span class="dot d-r"></span>Rủi ro<b>${r}</b></span>
+        </div>
+      </div>
+    </div>`));
+  const card=el(`<div class="indcard"></div>`);
+  t.context.forEach(x=>card.appendChild(el(indRow(x))));
+  col.appendChild(card);
+  ctxCols.appendChild(col);
+});
+
+// Footer
+document.getElementById('foot').innerHTML =
+  `<b>Nguồn dữ liệu (tra cứu 18/07/2026):</b> ICE/EIA/CME (dầu, DXY) · TradingEconomics/FRED (USD/VND, USD/JPY, UST10Y, VIX, T10Y3M) · SBV/CEIC (dự trữ, tỷ giá trung tâm, tín dụng) · BLS/BEA (CPI, PPI, GDP, việc làm Mỹ) · Eurostat/ECB/BOJ (CPI EU, lãi suất) · FRED Blog (Fed SEP dot plot) · GSO/Hải quan (CPI/GDP VN, XNK) · Bộ KH&ĐT (FDI) · S&P Global/ISM (PMI) · Gartner (chi tiêu IT) · NY Fed (GSCPI) · Drewry/Baltic Exchange (cước) · CNBC/Al Jazeera/Wikipedia/The National News (khủng hoảng Eo Hormuz, phí bảo hiểm war-risk) · ITIF/White & Case (thuế Section 232) · Investing.com/Vietcombank (FX forward, tỷ giá NHTM).<br>
+   <b>Ghi chú:</b> chỉ tiêu <span class="kbd">nhập tay</span> (lãi vay ngắn hạn, nearshoring, lead time) chưa có API — cập nhật thủ công. Biểu đồ dài chu kỳ: Ngày→30 phiên · Tuần→12 tuần · Tháng→từ đầu năm · Quý→4 quý. Số đếm trên thẻ tổng quan = chỉ tiêu theo dõi (Mục 2); donut Mục 3 = chỉ tiêu bối cảnh.`;
+</script>
+</body>
+</html>

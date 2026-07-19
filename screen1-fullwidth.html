@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard Overview - BÁO CÁO THEO DÕI BIẾN ĐỘNG VĨ MÔ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Space+Grotesk:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#102a5b",
+                        "on-error": "#490006",
+                        "primary-container": "#0d60d2",
+                        "on-background": "#dde5ff",
+                        "tertiary-container": "#fdb330",
+                        "primary": "#afc6ff",
+                        "tertiary-fixed-dim": "#eda521",
+                        "surface-container-lowest": "#000000",
+                        "secondary-fixed": "#6bff8f",
+                        "outline": "#5f74a9",
+                        "surface-tint": "#afc6ff",
+                        "surface-dim": "#030d24",
+                        "on-tertiary-container": "#543700",
+                        "secondary-dim": "#38d36a",
+                        "secondary-fixed-dim": "#5bf083",
+                        "secondary": "#4ae176",
+                        "on-tertiary-fixed-variant": "#5f3f00",
+                        "surface-container-low": "#021231",
+                        "on-secondary": "#004b1e",
+                        "surface-container-high": "#071e46",
+                        "background": "#0b0f19",
+                        "inverse-on-surface": "#4b556f",
+                        "error-container": "#871f21",
+                        "on-secondary-fixed": "#004a1d",
+                        "outline-variant": "#304778",
+                        "surface": "#131a2b",
+                        "error": "#fa746f",
+                        "surface-container": "#04183c",
+                        "on-surface-variant": "#a8b3c7",
+                        "on-primary-fixed": "#000000",
+                        "surface-container-highest": "#072354",
+                        "error-dim": "#c54d4a",
+                        "on-primary-container": "#ffffff",
+                        "on-secondary-container": "#41da70",
+                        "primary-dim": "#6c9cff",
+                        "on-primary": "#003c8b",
+                        "on-tertiary-fixed": "#382400",
+                        "on-tertiary": "#603f00",
+                        "tertiary-dim": "#eda521",
+                        "secondary-container": "#00461b",
+                        "on-surface": "#e7ebf3",
+                        "tertiary": "#ffc56c",
+                        "on-secondary-fixed-variant": "#006a2d",
+                        "primary-fixed": "#4a88fb",
+                        "on-error-container": "#ff9993",
+                        "inverse-primary": "#005ac8",
+                        "tertiary-fixed": "#fdb330",
+                        "surface-variant": "#232d45",
+                        "on-primary-fixed-variant": "#001336",
+                        "inverse-surface": "#faf8ff",
+                        "primary-fixed-dim": "#3a7bed"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "card-padding": "24px",
+                        "row-height-compact": "44px",
+                        "section-gap": "48px",
+                        "card-gap": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "data-number": ["Inter"],
+                        "label-md": ["Space Grotesk"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "data-number": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0b0f19;
+            color: #e7ebf3;
+        }
+        .text-on-surface-variant {
+            color: #a8b3c7;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-dim selection:text-on-primary-container">
+<!-- HEADER -->
+<header class="fixed top-0 w-full z-50 bg-gradient-to-r from-[#0f172a] via-[#131a2b] to-[#1e1b4b] border-b border-surface-variant shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+<!-- TopAppBar Content -->
+<div class="flex justify-between items-center w-full px-card-padding h-[72px]">
+<!-- Left: Logo & Titles -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-bright/50 border border-outline-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-dim" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div class="flex flex-col justify-center">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary-container tracking-tight leading-none uppercase">THEO DÕI BIẾN ĐỘNG VĨ MÔ</h1>
+<p class="font-label-md text-label-md text-on-surface-variant mt-1">Tập đoàn FPT</p>
+</div>
+</div>
+<!-- Top Navigation Cluster (Web) - UPDATED 4 TABS -->
+<nav class="hidden md:flex items-center h-full gap-2">
+<a class="px-5 h-full flex items-center font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1 uppercase hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">TỔNG QUAN</a>
+<a class="px-5 h-full flex items-center font-label-md text-label-md text-on-surface-variant font-medium uppercase hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">THỊ TRƯỜNG &amp; BỐI CẢNH</a>
+<a class="px-5 h-full flex items-center font-label-md text-label-md text-on-surface-variant font-medium uppercase hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">CÁC CHỈ SỐ MỞ RỘNG KHÁC</a>
+<a class="px-5 h-full flex items-center font-label-md text-label-md text-on-surface-variant font-medium uppercase hover:text-primary transition-colors duration-200 cursor-pointer active:opacity-80" href="#">CÀI ĐẶT</a>
+</nav>
+<!-- Right: Status & Actions -->
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-2 bg-surface/50 border border-surface-variant px-3 py-1.5 rounded-full">
+<div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
+<span class="font-label-md text-[13px] text-on-surface-variant">Cập nhật: 12/07/2026</span>
+</div>
+<div class="flex items-center gap-3 border-l border-surface-variant pl-6">
+<button class="w-10 h-10 rounded-full hover:bg-surface-bright/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80 relative group">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-bright/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80 relative group">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
+</button>
+<button class="w-10 h-10 rounded-full bg-surface-bright hover:ring-2 ring-primary-dim transition-all overflow-hidden flex items-center justify-center border border-outline-variant cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined text-primary-dim">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Warning Ribbon -->
+<div class="w-full bg-[#f0a824] px-card-padding py-2 flex items-center justify-between shadow-inner" id="warning-ribbon">
+<div class="flex items-center gap-2 text-[#493100]">
+<span class="material-symbols-outlined text-[18px]">warning</span>
+<span class="font-label-md text-[13px] font-semibold tracking-wide">Lưu ý: Số liệu chỉ mang tính tham khảo, không phải khuyến nghị đầu tư</span>
+</div>
+<button class="text-[#493100] hover:bg-[#c98715] rounded-full p-1 transition-colors flex items-center justify-center" onclick="document.getElementById('warning-ribbon').style.display='none'">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</header>
+<!-- MAIN LAYOUT (Full width) -->
+<div class="flex flex-1 pt-[112px] h-screen overflow-hidden">
+<!-- SIDEBAR REMOVED -->
+<!-- CONTENT CANVAS -->
+<main class="flex-1 overflow-y-auto bg-background p-6 md:p-10 relative">
+<!-- Decorative background elements -->
+<div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary-fixed-dim/5 rounded-full blur-[150px] pointer-events-none"></div>
+<div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-error-dim/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="w-full max-w-[1720px] mx-auto relative z-10 flex flex-col gap-section-gap pb-12">
+<!-- SECTION 01 -->
+<section>
+<!-- Section Header -->
+<div class="flex items-center gap-4 mb-8">
+<h2 class="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface uppercase flex items-center gap-3">
+<span class="text-primary-dim">01</span> — TỔNG QUAN TÌNH HÌNH
+                        </h2>
+<div class="h-px bg-surface-variant flex-1 ml-4 shadow-[0_1px_0_rgba(255,255,255,0.02)]"></div>
+</div>
+<!-- 3x2 Grid - SPANNING FULL WIDTH -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-card-gap">
+<!-- CARD 1: Tỷ giá & Ngoại hối -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Tỷ giá &amp; Ngoại hối</h3>
+<div class="px-3 py-1 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#22c55e] uppercase tracking-wider">Tích cực</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#22c55e] flex items-center gap-1 bg-[#22c55e]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> Đang tốt lên
+                                    </span>
+<div class="flex gap-1.5" title="4 Tốt, 1 Vừa, 0 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">VND ổn định quanh <span class="text-on-surface font-data-number">25,850</span>, CDS giảm về <span class="text-on-surface font-data-number">80bps</span></p>
+</div>
+</div>
+<!-- CARD 2: Cầu CNTT & AI -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Cầu CNTT &amp; AI</h3>
+<div class="px-3 py-1 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#22c55e] uppercase tracking-wider">Tích cực</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#22c55e] flex items-center gap-1 bg-[#22c55e]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> Đang tốt lên
+                                    </span>
+<div class="flex gap-1.5" title="5 Tốt, 1 Vừa, 0 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">SOX <span class="text-[#22c55e] font-data-number">+18%</span> YTD, AI capex h01 2026 đạt kỷ lục</p>
+</div>
+</div>
+<!-- CARD 3: Lãi suất & Chi phí vốn -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Lãi suất &amp; Chi phí vốn</h3>
+<div class="px-3 py-1 rounded-full bg-[#f0a824]/10 border border-[#f0a824]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#f0a824] shadow-[0_0_8px_#f0a824]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#f0a824] uppercase tracking-wider">Lưu ý</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#f0a824] flex items-center gap-1 bg-[#f0a824]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">swap_horiz</span> Đi ngang
+                                    </span>
+<div class="flex gap-1.5" title="2 Tốt, 3 Vừa, 1 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">Fed giữ nguyên <span class="text-on-surface font-data-number">4.25–4.50%</span>, curve đảo chiều nhẹ</p>
+</div>
+</div>
+<!-- CARD 4: Thương mại -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Thương mại</h3>
+<div class="px-3 py-1 rounded-full bg-[#f0a824]/10 border border-[#f0a824]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#f0a824] shadow-[0_0_8px_#f0a824]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#f0a824] uppercase tracking-wider">Lưu ý</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#f0a824] flex items-center gap-1 bg-[#f0a824]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span> Đang xấu đi
+                                    </span>
+<div class="flex gap-1.5" title="2 Tốt, 2 Vừa, 2 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">Thuế VN-Mỹ chưa rõ, tồn kho cảng tăng</p>
+</div>
+</div>
+<!-- CARD 5: Lạm phát & Tăng trưởng -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Lạm phát &amp; Tăng trưởng</h3>
+<div class="px-3 py-1 rounded-full bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#22c55e] uppercase tracking-wider">Tích cực</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#22c55e] flex items-center gap-1 bg-[#22c55e]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span> Đang tốt lên
+                                    </span>
+<div class="flex gap-1.5" title="4 Tốt, 1 Vừa, 0 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">CPI Mỹ hạ nhiệt <span class="text-on-surface font-data-number">2.7%</span>, GDP VN <span class="text-[#22c55e] font-data-number">+6.9%</span> Q2</p>
+</div>
+</div>
+<!-- CARD 6: Eo Hormuz -->
+<div class="bg-surface rounded-xl border border-surface-variant p-[24px] hover:border-primary-dim/40 hover:shadow-[0_0_20px_rgba(108,156,255,0.12)] transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[180px]">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-md text-[20px] font-semibold text-on-surface group-hover:text-primary-dim transition-colors">Eo Hormuz</h3>
+<div class="px-3 py-1 rounded-full bg-[#f04b4b]/10 border border-[#f04b4b]/20 flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-[#f04b4b] shadow-[0_0_8px_#f04b4b]"></div>
+<span class="font-label-md text-[12px] font-bold text-[#f04b4b] uppercase tracking-wider">Rủi ro</span>
+</div>
+</div>
+<div class="space-y-4 mt-auto">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-[13px] font-medium text-[#f04b4b] flex items-center gap-1 bg-[#f04b4b]/5 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span> Đang xấu đi
+                                    </span>
+<div class="flex gap-1.5" title="0 Tốt, 1 Vừa, 3 Xấu">
+<div class="w-2.5 h-2.5 rounded-full bg-[#f0a824]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-[#f04b4b]"></div>
+</div>
+</div>
+<div class="h-px w-full bg-surface-variant/50"></div>
+<p class="font-body-md text-[15px] text-on-surface-variant leading-relaxed">Dầu Brent vượt <span class="text-[#f04b4b] font-data-number">$88</span>, cước phí tăng mạnh</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- FOOTER -->
+<footer class="w-full mt-12 bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center px-card-padding py-6 text-on-surface-variant font-label-md text-label-md opacity-80">
+<span class="">© 2024 Macro Weekly Dashboard. High-Signal Clarity System. Tập đoàn FPT.</span>
+<div class="flex gap-8">
+<a class="hover:text-primary-dim transition-colors" href="#">Điều khoản</a>
+<a class="hover:text-primary-dim transition-colors" href="#">Bảo mật</a>
+<a class="hover:text-primary-dim transition-colors" href="#">Hỗ trợ phân tích</a>
+</div>
+</footer>
+</main>
+</div>
+<!-- Bottom Nav Bar (Mobile Fallback) -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface-dim border-t border-surface-variant flex justify-around items-center h-16 pb-safe z-50">
+<a class="flex flex-col items-center justify-center w-full h-full text-primary active:opacity-80" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-medium font-label-md">Tổng quan</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" href="#">
+<span class="material-symbols-outlined mb-1">public</span>
+<span class="text-[10px] font-medium font-label-md">Thị trường</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" href="#">
+<span class="material-symbols-outlined mb-1">monitoring</span>
+<span class="text-[10px] font-medium font-label-md">Chỉ số</span>
+</a>
+<a class="flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" href="#">
+<span class="material-symbols-outlined mb-1">settings</span>
+<span class="text-[10px] font-medium font-label-md">Cài đặt</span>
+</a>
+</nav>
+</body></html>

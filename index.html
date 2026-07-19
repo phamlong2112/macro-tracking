@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Dashboard Overview - BÁO CÁO THEO DÕI BIẾN ĐỘNG VĨ MÔ</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet"/>
+    
+    <!-- CSS & Tailwind configuration -->
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="./tailwind-config.js"></script>
+
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-dim selection:text-on-primary-container">
+    
+    <!-- HEADER -->
+    <header class="fixed top-0 w-full z-50 bg-gradient-to-r from-[#0f172a] via-[#131a2b] to-[#1e1b4b] border-b border-surface-variant shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+        <!-- TopAppBar Content -->
+        <div class="flex justify-between items-center w-full px-card-padding h-[72px]">
+            <!-- Left: Logo & Titles -->
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg bg-surface-bright/50 border border-outline-variant flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-primary-dim" style="font-variation-settings: 'FILL' 1;">analytics</span>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <h1 class="font-headline-md text-headline-md font-bold text-on-primary-container tracking-tight leading-none uppercase">THEO DÕI BIẾN ĐỘNG VĨ MÔ</h1>
+                    <p class="font-label-md text-label-md text-on-surface-variant mt-1">Tập đoàn FPT</p>
+                </div>
+            </div>
+
+            <!-- Top Navigation Cluster (Web) - 4 TABS -->
+            <nav id="top-nav" class="hidden md:flex items-center h-full gap-2">
+                <a class="nav-tab px-5 h-full flex items-center font-label-md text-label-md font-bold uppercase transition-colors duration-200 cursor-pointer active:opacity-80 border-b-2 border-primary text-primary" data-tab="tab-1">TỔNG QUAN</a>
+                <a class="nav-tab px-5 h-full flex items-center font-label-md text-label-md font-medium uppercase transition-colors duration-200 cursor-pointer active:opacity-80 border-b-2 border-transparent text-on-surface-variant hover:text-primary" data-tab="tab-2">THỊ TRƯỜNG & BỐI CẢNH</a>
+                <a class="nav-tab px-5 h-full flex items-center font-label-md text-label-md font-medium uppercase transition-colors duration-200 cursor-pointer active:opacity-80 border-b-2 border-transparent text-on-surface-variant hover:text-primary" data-tab="tab-3">CÁC CHỈ SỐ MỞ RỘNG KHÁC</a>
+                <a class="nav-tab px-5 h-full flex items-center font-label-md text-label-md font-medium uppercase transition-colors duration-200 cursor-pointer active:opacity-80 border-b-2 border-transparent text-on-surface-variant hover:text-primary" data-tab="tab-4">CÀI ĐẶT</a>
+            </nav>
+
+            <!-- Right: Status & Actions -->
+            <div class="flex items-center gap-6">
+                <div class="hidden lg:flex items-center gap-2 bg-surface/50 border border-surface-variant px-3 py-1.5 rounded-full">
+                    <div class="w-2 h-2 rounded-full bg-primary-fixed animate-pulse"></div>
+                    <span class="font-label-md text-[13px] text-on-surface-variant">Cập nhật: 12/07/2026</span>
+                </div>
+                <div class="flex items-center gap-3 border-l border-surface-variant pl-6">
+                    <button class="w-10 h-10 rounded-full hover:bg-surface-bright/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80 relative group">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                    <button class="w-10 h-10 rounded-full hover:bg-surface-bright/30 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80 relative group">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-background"></span>
+                    </button>
+                    <button class="w-10 h-10 rounded-full bg-surface-bright hover:ring-2 ring-primary-dim transition-all overflow-hidden flex items-center justify-center border border-outline-variant cursor-pointer active:opacity-80">
+                        <span class="material-symbols-outlined text-primary-dim">account_circle</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning Ribbon -->
+        <div class="w-full bg-[#f0a824] px-card-padding py-2 flex items-center justify-between shadow-inner" id="warning-ribbon">
+            <div class="flex items-center gap-2 text-[#493100]">
+                <span class="material-symbols-outlined text-[18px]">warning</span>
+                <span class="font-label-md text-[13px] font-semibold tracking-wide">Lưu ý: Số liệu chỉ mang tính tham khảo, không phải khuyến nghị đầu tư</span>
+            </div>
+            <button class="text-[#493100] hover:bg-[#c98715] rounded-full p-1 transition-colors flex items-center justify-center" onclick="document.getElementById('warning-ribbon').style.display='none'">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT (Full width) -->
+    <div class="flex flex-1 pt-[112px] h-screen overflow-hidden">
+        <!-- CONTENT CANVAS -->
+        <main class="flex-1 overflow-y-auto bg-background p-6 md:p-10 relative" id="main-content">
+            <!-- Decorative background elements -->
+            <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary-fixed-dim/5 rounded-full blur-[150px] pointer-events-none z-0"></div>
+            <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-error-dim/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+            
+            <div class="w-full max-w-[1720px] mx-auto relative z-10 flex flex-col gap-section-gap pb-12" id="tab-container">
+                <!-- Tab contents will be injected here by JS -->
+            </div>
+            
+            <!-- FOOTER -->
+            <footer class="w-full mt-12 bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center px-card-padding py-6 text-on-surface-variant font-label-md text-label-md opacity-80 z-10 relative">
+                <span class="">© 2026 Macro Weekly Dashboard. High-Signal Clarity System. Tập đoàn FPT.</span>
+                <div class="flex gap-8">
+                    <a class="hover:text-primary-dim transition-colors" href="#">Điều khoản</a>
+                    <a class="hover:text-primary-dim transition-colors" href="#">Bảo mật</a>
+                    <a class="hover:text-primary-dim transition-colors" href="#">Hỗ trợ phân tích</a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Bottom Nav Bar (Mobile Fallback) -->
+    <nav class="md:hidden fixed bottom-0 w-full bg-surface-dim border-t border-surface-variant flex justify-around items-center h-16 pb-safe z-50">
+        <a class="nav-tab-mobile flex flex-col items-center justify-center w-full h-full text-primary active:opacity-80" data-tab="tab-1">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+            <span class="text-[10px] font-medium font-label-md">Tổng quan</span>
+        </a>
+        <a class="nav-tab-mobile flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" data-tab="tab-2">
+            <span class="material-symbols-outlined mb-1">public</span>
+            <span class="text-[10px] font-medium font-label-md">Thị trường</span>
+        </a>
+        <a class="nav-tab-mobile flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" data-tab="tab-3">
+            <span class="material-symbols-outlined mb-1">monitoring</span>
+            <span class="text-[10px] font-medium font-label-md">Chỉ số</span>
+        </a>
+        <a class="nav-tab-mobile flex flex-col items-center justify-center w-full h-full text-on-surface-variant active:opacity-80" data-tab="tab-4">
+            <span class="material-symbols-outlined mb-1">settings</span>
+            <span class="text-[10px] font-medium font-label-md">Cài đặt</span>
+        </a>
+    </nav>
+    
+    <!-- Modal Container -->
+    <div id="modal-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
+        <!-- Injected via JS -->
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
