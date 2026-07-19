@@ -4,9 +4,12 @@
 export const TOPICS = [
 {
   id:"fx", code:"A", ic:"💱", name:"Tỷ giá & Ngoại hối", status:"risk", trend:"down",
+  driverNote:"Rủi ro cao: USD/VND liên ngân hàng áp sát trần biên độ ±5% (26.460, cách trần chỉ ~0,2%) giữa lúc xung đột Mỹ–Iran đẩy giá dầu và tâm lý trú ẩn USD tăng mạnh. Dự trữ ngoại hối ~$87,6B chỉ tương đương ~1,75 tháng nhập khẩu, dưới ngưỡng an toàn IMF (3 tháng NK bình quân). Điểm đỡ: FDI giải ngân đạt đỉnh 5 năm (+11,2% YoY) và SBV giữ nguyên lãi suất điều hành, phần nào bù đắp áp lực bán ròng khối ngoại (dù đã thu hẹp đáng kể so đáy tháng 8/2025).",
   core:[
     {n:"USD/VND liên ngân hàng", v:"26.460", asOf:"17/07", freq:"Ngày", sig:"red", note:"Tỷ giá trung tâm NHNN lên 25.254 (17/07, +11đ so 7/07); bán ra NHTM ~26.460 — chỉ còn cách trần biên độ ±5% (~26.517) khoảng 0,2%, rất sát trần giữa lúc xung đột Mỹ–Iran leo thang đẩy giá dầu và USD biến động mạnh. (Đã chỉnh lại chuỗi lịch sử 9–16/7 theo tỷ giá thị trường ValutaFX.com, thay cho dữ liệu cũ bị lặp trùng; 11–12/7 không có dữ liệu do cuối tuần.)",
-      spark:[26270,26295,26267,26254,26264,26256,26254,26460,26460], cmp:{w:"+0,7%",m:"−0,2%",ytd:"+0,1%",yoy:"+0,6%"}},
+      spark:[26270,26295,26267,26254,26264,26256,26254,26460,26460],
+      sparkDates:["07/07","08/07","09/07","10/07","13/07","14/07","15/07","16/07","17/07"],
+      cmp:{w:"+0,7%",m:"−0,2%",ytd:"+0,1%",yoy:"+0,6%"}},
     {n:"Tỷ giá kỳ hạn USD/VND (Forward 3M)", v:"~26.636", asOf:"17/07", freq:"Ngày", sig:"amber", note:"Bảng tỷ giá kỳ hạn USD/VND (17/07): kỳ hạn 3M Mua 159,12 / Bán 192,98 (Cao 190,39 / Thấp 183,32, T.đổi −12,91) ⇒ điểm kỳ hạn trung bình ~176,05đ + giao ngay liên NH 26.460 (17/07) ⇒ ~26.636 — hàm ý VND giảm thêm ~0,67% sau 3 tháng.",
       spark:[26488,26636], cmp:{}},
     {n:"USD/JPY", v:"162,1", asOf:"17/07", freq:"Ngày", sig:"amber", note:"Quanh 162 (giữa tháng 7) - yên tiếp tục chịu sức ép từ giá dầu tăng do xung đột Mỹ-Iran, dù phần nào được hỗ trợ bởi USD yếu sau lạm phát Mỹ hạ nhiệt.",
@@ -31,6 +34,7 @@ export const TOPICS = [
 },
 {
   id:"demand", code:"B", ic:"🌐", name:"Cầu CNTT & AI", status:"cau", trend:"down",
+  driverNote:"Hạ từ Tích cực xuống Thận trọng: 3/5 chỉ số core (Nasdaq-100, VanEck SMH, Hang Seng TECH) đồng loạt chuyển đỏ do một đợt bán tháo cổ phiếu AI/công nghệ toàn cầu giữa tháng 7 (lo ngại định giá quá cao, Z.ai -28,5%, MiniMax -15,6%). Tuy nhiên đây là tín hiệu giá/sentiment ngắn hạn — các chỉ số cầu thực (chi tiêu IT Gartner +13,5% YoY, PMI đơn hàng mới mở rộng, capex hyperscaler +55,8%) chưa cho thấy dấu hiệu suy yếu. Cần theo dõi thêm 1-2 tuần để xác nhận đây là điều chỉnh kỹ thuật hay điểm đảo chiều cầu IT thực sự.",
   core:[
     {n:"Chi tiêu IT toàn cầu 2026", v:"$6,31T", asOf:"Q2/26", freq:"Quý", sig:"green", note:"Gartner nâng dự báo — nền cầu outsourcing mở rộng mạnh.",
       spark:[6.08,6.15,6.31], cmp:{w:"—",m:"—",ytd:"—",yoy:"+13,5%"}},
@@ -39,11 +43,15 @@ export const TOPICS = [
     {n:"PMI New Orders (ISM Mỹ / SX VN)", v:"56,0 / 51,8", asOf:"T6/26", freq:"Tháng", sig:"green", note:"Đơn hàng mới mở rộng 6 tháng liên tiếp (Mỹ); VN đơn hàng tăng.",
       spark:[52,53.5,54.8,55.5,56.8,56.0], cmp:{w:"—",m:"−0,8đ",ytd:"—",yoy:"↑"}},
     {n:"Cổ phiếu công nghệ (Nasdaq-100)", v:"28.593", asOf:"17/07", freq:"Ngày", sig:"red", note:"Giảm 2 phiên liên tiếp (-1,64% ngày 16/7, -1,50% ngày 17/7) còn 28.593 điểm khi nhóm công nghệ/AI chịu áp lực bán và căng thẳng Iran leo thang; YTD vẫn +13,2%.",
-      spark:[29172,29253,29739,29831,29264,29592,29512,29028,28593], cmp:{w:"−4,2%",m:"−3,8%",ytd:"+13,2%",yoy:"↑"}},
+      spark:[29172,29253,29739,29831,29264,29592,29512,29028,28593],
+      sparkDates:["07/07","08/07","09/07","10/07","13/07","14/07","15/07","16/07","17/07"],
+      cmp:{w:"−4,2%",m:"−3,8%",ytd:"+13,2%",yoy:"↑"}},
     {n:"Chỉ số bán dẫn (VanEck SMH)", v:"$556,53", asOf:"17/07", freq:"Ngày", sig:"red", note:"Đảo chiều giảm mạnh sau khi lập đỉnh $590,77 (15/7, được TSMC & nhóm chip dẫn dắt) — giảm 2 phiên liên tiếp (-3,7% ngày 16/7, -2,18% ngày 17/7) còn $556,53 khi giới phân tích (BofA, MarketWatch) cảnh báo cổ phiếu bán dẫn tiến sát vùng thị trường gấu.",
       spark:[620.46,592.29,604.30,581.45,593.00,607.73,611.03,585.62,600.31,590.77,568.92,556.53], cmp:{w:"−8,9%",m:"−10,8%",ytd:"+54,5%",yoy:"↑"}},
     {n:"Hang Seng TECH Index (HSTECH)", v:"4.623", asOf:"17/07", freq:"Ngày", sig:"red", note:"Giảm 4,37% phiên 17/7 còn 4.623 điểm — bán tháo lan rộng nhóm công nghệ/AI Trung Quốc sau khi Z.ai lao dốc 28,5%, MiniMax giảm 15,6%, giữa lo ngại định giá nhóm AI quá cao.",
-      spark:[4256,4393,4472,4454,4499,4541,4507,4711,4740,4623], cmp:{w:"—",m:"−1,0%",ytd:"—",yoy:"−9,2%"}}
+      spark:[4256,4393,4472,4454,4499,4541,4507,4711,4740,4623],
+      sparkDates:["26/06","29/06","30/06","02/07","03/07","06/07","07/07","08/07","15/07","17/07"],
+      cmp:{w:"—",m:"−1,0%",ytd:"—",yoy:"−9,2%"}}
   ],
   context:[
     {n:"Capex hyperscaler / data center", v:"+55,8%", asOf:"2026", freq:"Quý", sig:"green", note:"Chi data center $788B (Gartner) — cầu hạ tầng AI bùng nổ.", spark:[], cmp:{}},
@@ -59,6 +67,7 @@ export const TOPICS = [
 },
 {
   id:"rates", code:"C", ic:"🏦", name:"Lãi suất & Chi phí vốn", status:"cau", trend:"down",
+  driverNote:"Chuyển thận trọng sau khi Fed đảo chiều hawkish tại kỳ họp SEP tháng 6 — trung vị lãi suất cuối 2026 nâng lên 3,8% (từ 3,4%), 9/18 thành viên dự báo tăng thêm lãi dưới tân Chủ tịch Kevin Warsh; BOJ và ECB cũng đồng loạt nâng lãi (1,00% và 2,25%). Trong nước, thanh khoản liên ngân hàng đã dịu bớt (VNIBOR O/N về 4,68% từ đỉnh 6,62% đầu tháng) và tăng trưởng tín dụng VND +7,73% vẫn bám sát mục tiêu cả năm ~15% — điểm cân bằng giữa áp lực lãi suất toàn cầu và thanh khoản nội địa ổn định.",
   core:[
     {n:"Lãi suất chính sách Fed", v:"3,50–3,75%", asOf:"17/06", freq:"Kỳ họp", sig:"amber", note:"Giữ nguyên (họp 17/06); SEP cùng kỳ cho thấy dot plot đảo chiều hawkish, median cuối 2026 nâng lên 3,8% (từ 3,4%) — 9/18 thành viên dự báo tăng thêm lãi. Họp tiếp theo 28–29/07 dự kiến giữ nguyên. ECB nâng lên 2,25% (17/06); BOJ nâng lên 1,00% (16/06, cao nhất từ 1995).",
       spark:[3.75,3.75,3.63,3.63,3.63,3.63], cmp:{w:"—",m:"0đ",ytd:"—",yoy:"↓"}},
@@ -83,6 +92,7 @@ export const TOPICS = [
 },
 {
   id:"trade", code:"D", ic:"🚢", name:"Thương mại", status:"cau", trend:"down",
+  driverNote:"Thận trọng do cán cân thương mại đảo chiều sang nhập siêu ~16,7 tỷ USD trong H1 (từ xuất siêu ~8 tỷ USD cùng kỳ 2025), khi nhập khẩu tăng vọt 33,4% YoY (đặc biệt từ Hàn Quốc +81%, Trung Quốc +39%). Bù lại, dòng vốn FDI vẫn rất tích cực — đăng ký mới +87,2% YoY, giải ngân đạt đỉnh 5 năm — và PMI sản xuất VN duy trì trên 50 suốt 12 tháng liên tiếp. Rủi ro cần theo dõi: cước vận tải tuyến Trung Đông tăng vọt (Drewry Vùng Vịnh +120–157%) do khủng hoảng Hormuz, có thể đẩy chi phí logistics nhập khẩu lên cao hơn nữa.",
   core:[
     {n:"Cán cân thương mại VN", v:"−2,6 tỷ USD", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Thu hẹp từ −5,2 tỷ USD (T5) nhưng H1 nhập siêu ~16,7 tỷ USD (đảo chiều từ xuất siêu ~8 tỷ USD cùng kỳ 2025) — XK 266,52 tỷ USD (+21% yoy), NK 283,17 tỷ USD (+33,4% yoy; nhập siêu từ Hàn Quốc +81%, Trung Quốc +39%).",
       spark:[-1.2,-2.8,-3.6,-4.2,-5.2,-2.6], cmp:{w:"—",m:"cải thiện",ytd:"−16,65 tỷ USD",yoy:"đảo chiều"}},
@@ -108,6 +118,7 @@ export const TOPICS = [
 },
 {
   id:"macro", code:"E", ic:"📊", name:"Lạm phát & Tăng trưởng", status:"cau", trend:"up",
+  driverNote:"Trend tăng nhờ tăng trưởng GDP tích cực ở cả hai nền kinh tế — Mỹ phục hồi lên +2,1% (Q1) và Việt Nam đạt +8,39% (Q2), cao nhất kể từ 2011 — trong khi lạm phát hạ nhiệt (CPI Mỹ 3,5% từ 4,2%; CPI VN 4,69% từ 5,60%). Tuy nhiên vẫn giữ mức thận trọng vì đây là số liệu tháng 6, trước khi Brent vọt lên ~$88 giữa tháng 7 do khủng hoảng Hormuz — lạm phát năng lượng nhiều khả năng đảo chiều tăng trong số liệu tháng 7 tới. Cung tiền M2 VN (+15,2% YoY) tiếp tục mở rộng nhanh hơn tăng trưởng GDP, cần theo dõi thêm áp lực lạm phát trung hạn.",
   core:[
     {n:"CPI Mỹ (YoY)", v:"3,5%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Giảm mạnh về 3,5% yoy (T6, từ 4,2% T5) — MoM -0,4%, mức giảm tháng mạnh nhất từ 4/2020, chủ yếu do năng lượng giảm 5,7%. Core CPI 2,6% yoy (đi ngang MoM). Số liệu này là trước khi Brent tăng vọt do xung đột Hormuz giữa tháng 7 — CPI tháng 7 nhiều khả năng đảo chiều tăng.",
       spark:[3.1,3.3,3.4,3.6,3.8,4.2,3.5], cmp:{w:"—",m:"−0,4%",ytd:"↓",yoy:"3,5%"}},
@@ -134,9 +145,12 @@ export const TOPICS = [
 },
 {
   id:"hormuz", code:"F", ic:"🛢️", name:"Eo Hormuz", status:"risk", trend:"down",
+  driverNote:"Rủi ro cao, đang ở trạng thái ALERT: Iran tấn công thêm 3 tàu chở dầu UAE giữa tháng 7 khiến Mỹ không kích trở lại và tái áp trừng phạt dầu Iran, chấm dứt lệnh ngừng bắn trước đó. Brent vọt lên $88,10/thùng (+15% trong tuần), sát ngưỡng kích hoạt đỏ (+20%/tuần hoặc vượt $100); lưu lượng tàu qua eo chỉ còn 11,4% mức bình thường, phí bảo hiểm rủi ro chiến tranh tăng 12–40 lần, cước VLCC tuyến Trung Đông tăng 84,5% so tháng. Giá xăng trong nước đã đảo chiều tăng theo (kỳ điều hành 16/07, +547đ/l), báo hiệu áp lực lạm phát năng lượng sẽ lan sang CPI tháng 7.",
   core:[
     {n:"Giá dầu Brent", v:"$88,10", asOf:"17/07", freq:"Ngày", sig:"amber", note:"Tăng vọt lên $88,10/thùng (17/07, +4,5% trong phiên từ $84,23) sau khi Mỹ không kích Iran trở lại đáp trả vụ tấn công 3 tàu chở dầu UAE — tuần tăng +15%, sát ngưỡng kích hoạt đỏ (+20%/tuần hoặc vượt $100). (Đã chỉnh lại chuỗi lịch sử 10–16/7 do bị lặp dữ liệu tuần trước: 10/7=$76,80, 14/7=$83,11 (giá mở cửa), 15/7≈$85,30, 16/7≈$84,22 — khớp với mức $84,23 nêu trên. 11–13/7 chưa tìm được số liệu đáng tin cậy nên bỏ trống thay vì đoán.)",
-      spark:[73,74.6,76,76.8,83.11,85.3,84.22,88.1], cmp:{w:"+15,0%",m:"+8%",ytd:"↑",yoy:"↑"}},
+      spark:[73,74.6,76,76.8,83.11,85.3,84.22,88.1],
+      sparkDates:["07/07","08/07","09/07","10/07","14/07","15/07","16/07","17/07"],
+      cmp:{w:"+15,0%",m:"+8%",ytd:"↑",yoy:"↑"}},
     {n:"Giá xăng E10 RON95 VN", v:"20.550đ/l", asOf:"16/07", freq:"Kỳ 10 ngày", sig:"amber", note:"Đảo chiều tăng đúng như dự báo: kỳ điều hành 16/07 (15h, liên Bộ Công Thương–Tài chính) tăng 547đ/l lên tối đa 20.550đ/l do giá xăng dầu thế giới bật mạnh (Brent vọt lên ~$88) — chấm dứt chuỗi giảm từ đầu tháng 7.",
       spark:[22000,21500,21000,20600,20000,19300,20550], cmp:{w:"+6,5%",m:"−10%",ytd:"↓",yoy:"↓"}},
     {n:"CPI nhiên liệu VN (giao thông)", v:"+5,29%", asOf:"T6/26", freq:"Tháng", sig:"amber", note:"Hạ mạnh từ +12,48% (T5); xăng −10% MoM kéo CPI chung giảm — rủi ro đảo chiều tăng trong số liệu tháng 7 do Brent vọt lên ~$88 giữa tháng.",

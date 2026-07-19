@@ -341,15 +341,16 @@ async function main() {
     })
 
     // Upsert TopicWeeklyStatus
+    const topicDriverNote = 'driverNote' in topic ? (topic as any).driverNote : ''
     await prisma.topicWeeklyStatus.upsert({
       where: { weeklyReportId_topicId: { weeklyReportId: report.id, topicId: topic.id } },
-      update: { status: topic.status, trend: topic.trend },
+      update: { status: topic.status, trend: topic.trend, driverNote: topicDriverNote },
       create: {
         weeklyReportId: report.id,
         topicId: topic.id,
         status: topic.status,
         trend: topic.trend,
-        driverNote: ''
+        driverNote: topicDriverNote
       }
     })
 
@@ -407,14 +408,22 @@ async function main() {
       const cmp: Record<string, string> = (ind as any).cmp || {}
       const asOfDate = parseAsOf(ind.asOf)
       const daysBack = freqToDaysBack(ind.freq)
+      // sparkDates (tùy chọn): ngày thật "DD/MM" cho từng điểm spark, dùng khi chuỗi có
+      // khoảng trống thật (cuối tuần, thiếu số liệu...) thay vì suy ra lùi đều daysBack từ asOf
+      const sparkDates: string[] | null = Array.isArray((ind as any).sparkDates) ? (ind as any).sparkDates : null
 
       // Build observations array (oldest to newest)
       const obsToCreate = spark.map((val, idx) => {
         const isLast = idx === spark.length - 1
-        // Date: lùi từ asOf
-        const daysFromEnd = (spark.length - 1 - idx) * daysBack
-        const date = new Date(asOfDate)
-        date.setDate(date.getDate() - daysFromEnd)
+        let date: Date
+        if (sparkDates && sparkDates[idx]) {
+          date = parseAsOf(sparkDates[idx])
+        } else {
+          // Date: lùi từ asOf
+          const daysFromEnd = (spark.length - 1 - idx) * daysBack
+          date = new Date(asOfDate)
+          date.setDate(date.getDate() - daysFromEnd)
+        }
 
         return {
           indicatorId: indicator!.id,
