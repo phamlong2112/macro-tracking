@@ -13,3 +13,15 @@ Lỗi đã gặp nhiều lần trong dự án: khi chạy đồng bộ vào mộ
 - `latestUpdateDate` hiển thị ở header dashboard = `MAX(Observation.date)` toàn hệ thống — đây là ngày *hệ thống được đồng bộ gần nhất*, khác với ngày của từng điểm dữ liệu riêng lẻ. Badge "MỚI" (`IndicatorRow.tsx`) chỉ nên bật cho chỉ số tần suất Ngày/Tuần/Kỳ 10 ngày có điểm dữ liệu thật trong 7 ngày gần đây — không dùng `latestUpdateDate` để suy ra chỉ số đó "vừa có số liệu mới".
 
 **Trước khi ghi đè một chỉ số khi đồng bộ:** so giá trị mới định ghi với giá trị `Observation` gần nhất hiện có. Nếu giống hệt, không ghi thêm — chỉ ghi khi thật sự khác.
+
+---
+
+## Database & Môi trường
+
+Dự án đã chuyển hoàn toàn từ **SQLite** sang **PostgreSQL 17 trên Neon.tech** (từ 2026-07-19).
+
+- `DATABASE_URL` trong file `.env` trỏ tới Neon PostgreSQL — dùng cho cả local lẫn production.
+- File `prisma/dev.db` (SQLite cũ) được giữ lại nhưng không còn được sử dụng.
+- Schema: `prisma/schema.prisma` — provider là `postgresql`.
+- Khi thay đổi schema, chạy `npx prisma migrate dev --name <tên>` rồi commit file migration mới.
+- Chi tiết đầy đủ về hạ tầng xem tại [SETUP.md](./SETUP.md).
