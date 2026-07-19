@@ -6,9 +6,6 @@ const nextConfig: NextConfig = {
     // Type checking chạy ở local. Vercel chỉ cần compile, không cần type-check lại.
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 }
 
 export default nextConfig
